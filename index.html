@@ -565,7 +565,7 @@ function resetTest(){
 QUOTIENTS.forEach(q=>state.scores[q.id]=[]);
 
 // ====================== Monetization ======================
-const BACKEND_URL = localStorage.getItem('backend_url') || 'https://seven-quotients.onrender.com';
+// Try URL param first, then localStorage, then defaultconst BACKEND_URL = new URLSearchParams(window.location.search).get('api_url') || localStorage.getItem('backend_url') || 'https://seven-quotients.onrender.com';
 let currentUserId = null;
 
 // Load ads from backend
