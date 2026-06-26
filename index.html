@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>人类七商测试</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  color:#fff;overflow-x:hidden;padding:20px
+}
+.container{
+  width:100%;max-width:520px;min-height:600px;
+  background:rgba(255,255,255,.06);backdrop-filter:blur(20px);
+  border-radius:24px;border:1px solid rgba(255,255,255,.1);
+  padding:40px 32px;position:relative;
+  box-shadow:0 25px 60px rgba(0,0,0,.5)
+}
+
+/* ========== Welcome ========== */
+#screen-welcome{text-align:center;padding:50px 0 20px}
+#screen-welcome .logo{
+  width:100px;height:100px;margin:0 auto 28px;
+  background:linear-gradient(135deg,#6c5ce7,#a29bfe);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:42px;font-weight:700;box-shadow:0 10px 40px rgba(108,92,231,.35)
+}
+#screen-welcome h1{font-size:32px;font-weight:700;margin-bottom:10px;letter-spacing:4px}
+#screen-welcome p{color:rgba(255,255,255,.6);font-size:15px;line-height:1.7;margin-bottom:8px}
+#screen-welcome .quotes-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:28px 0 36px
+}
+#screen-welcome .quotes-grid .q-item{
+  background:rgba(255,255,255,.06);border-radius:12px;padding:12px 6px;
+  text-align:center;transition:.3s
+}
+#screen-welcome .quotes-grid .q-item:hover{background:rgba(255,255,255,.12)}
+#screen-welcome .quotes-grid .q-item .q-name{font-size:22px;font-weight:700}
+#screen-welcome .quotes-grid .q-item .q-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+
+/* ========== Buttons ========== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 44px;border-radius:50px;border:none;cursor:pointer;
+  font-size:17px;font-weight:600;transition:all .3s;text-decoration:none
+}
+.btn-primary{
+  background:linear-gradient(135deg,#6c5ce7,#a29bfe);
+  color:#fff;box-shadow:0 8px 30px rgba(108,92,231,.35)
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(108,92,231,.45)}
+.btn-primary:active{transform:translateY(0);box-shadow:0 4px 15px rgba(108,92,231,.25)}
+.btn-secondary{
+  background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)
+}
+.btn-secondary:hover{background:rgba(255,255,255,.18)}
+
+/* ========== Screens ========== */
+.screen{display:none;animation:fadeIn .4s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ========== Test ========== */
+#screen-test{padding:4px 0}
+.test-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:16px
+}
+.test-header .counter{font-size:14px;color:rgba(255,255,255,.6)}
+.test-header .category-tag{
+  font-size:12px;padding:4px 14px;border-radius:20px;
+  background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)
+}
+.progress-wrap{
+  width:100%;height:4px;background:rgba(255,255,255,.1);border-radius:4px;margin-bottom:32px;overflow:hidden
+}
+.progress-bar{
+  height:100%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);
+  border-radius:4px;transition:width .5s ease;width:0%
+}
+.question-text{
+  font-size:19px;font-weight:600;line-height:1.6;margin-bottom:28px;min-height:60px
+}
+.options{display:flex;flex-direction:column;gap:10px}
+.option-btn{
+  display:block;width:100%;padding:14px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);color:rgba(255,255,255,.85);cursor:pointer;
+  font-size:15px;text-align:left;transition:all .3s;line-height:1.5
+}
+.option-btn:hover{
+  background:rgba(108,92,231,.2);border-color:#6c5ce7;transform:translateX(4px)
+}
+.option-btn.selected{
+  background:rgba(108,92,231,.25);border-color:#a29bfe;
+  box-shadow:0 0 20px rgba(108,92,231,.2)
+}
+.option-btn .option-key{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.1);
+  font-size:13px;font-weight:600;margin-right:12px;flex-shrink:0
+}
+.option-btn .option-text{display:inline}
+
+/* ========== Results ========== */
+#screen-results{text-align:center}
+#screen-results h2{font-size:26px;margin-bottom:6px}
+#screen-results .subtitle{color:rgba(255,255,255,.5);font-size:14px;margin-bottom:20px}
+
+.chart-wrap{
+  position:relative;width:100%;max-width:440px;margin:0 auto 20px
+}
+#radarCanvas{width:100%;height:auto;display:block}
+
+.grade-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0 28px
+}
+.grade-grid .g-item{padding:12px 6px;border-radius:12px;background:rgba(255,255,255,.06)}
+.grade-grid .g-item .g-grade{font-size:22px;font-weight:700}
+.grade-grid .g-item .g-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+
+.results-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:28px
+}
+.result-card{
+  background:rgba(255,255,255,.06);border-radius:14px;padding:14px 12px;
+  text-align:center;transition:.3s
+}
+.result-card:hover{background:rgba(255,255,255,.1)}
+.result-card .rc-name{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:4px}
+.result-card .rc-value{font-size:20px;font-weight:700}
+.result-card .rc-grade{
+  display:inline-block;font-size:12px;padding:2px 12px;border-radius:12px;
+  margin-top:4px;font-weight:600
+}
+.result-card .rc-score{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
+
+@media(max-width:480px){
+  .container{padding:28px 18px;border-radius:18px}
+  #screen-welcome h1{font-size:26px}
+  #screen-welcome .quotes-grid{grid-template-columns:repeat(4,1fr);gap:6px}
+  #screen-welcome .quotes-grid .q-item{padding:10px 4px}
+  #screen-welcome .quotes-grid .q-item .q-name{font-size:18px}
+  .question-text{font-size:17px}
+  .option-btn{padding:12px 14px;font-size:14px}
+  .results-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .grade-grid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+  <!-- Welcome Screen -->
+  <div id="screen-welcome" class="screen active">
+    <div class="logo">7Q</div>
+    <h1>人类七商测试</h1>
+    <p>全面评估你的七种核心商数<br>14道精选题目 · 科学评分 · 可视化雷达图</p>
+    <div class="quotes-grid">
+      <div class="q-item"><div class="q-name" style="color:#ff6b6b">德</div><div class="q-label">MQ</div></div>
+      <div class="q-item"><div class="q-name" style="color:#4ecdc4">智</div><div class="q-label">IQ</div></div>
+      <div class="q-item"><div class="q-name" style="color:#45b7d1">情</div><div class="q-label">EQ</div></div>
+      <div class="q-item"><div class="q-name" style="color:#96ceb4">逆</div><div class="q-label">AQ</div></div>
+      <div class="q-item"><div class="q-name" style="color:#f9ca24">财</div><div class="q-label">FQ</div></div>
+      <div class="q-item"><div class="q-name" style="color:#dda0dd">灵</div><div class="q-label">SQ</div></div>
+      <div class="q-item"><div style="font-size:22px;font-weight:700;color:#98d8c8">健</div><div class="q-label">HQ</div></div>
+      <div class="q-item"><div class="q-name" style="color:#a29bfe">测</div><div class="q-label">7Q</div></div>
+    </div>
+    <button class="btn btn-primary" onclick="startTest()">开始测试</button>
+  </div>
+
+  <!-- Test Screen -->
+  <div id="screen-test" class="screen">
+    <div class="test-header">
+      <span class="counter" id="qCounter">1 / 14</span>
+      <span class="category-tag" id="qCategory">德商</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="question-text" id="qText">题目加载中...</div>
+    <div class="options" id="qOptions"></div>
+  </div>
+
+  <!-- Results Screen -->
+  <div id="screen-results" class="screen">
+    <h2>测试结果</h2>
+    <p class="subtitle">你的七商综合评估雷达图</p>
+    <div class="chart-wrap">
+      <canvas id="radarCanvas"></canvas>
+    </div>
+    <div class="grade-grid" id="gradeGrid"></div>
+    <div class="results-grid" id="resultsGrid"></div>
+    <button class="btn btn-secondary" onclick="resetTest()">重新测试</button>
+  </div>
+
+</div>
+
+<script>
+// ====================== Data ======================
+const QUOTIENTS = [
+  { id:'mq', name:'德商', en:'MQ', full:'道德商数', color:'#ff6b6b', desc:'做人的品德与道德判断力' },
+  { id:'iq', name:'智商', en:'IQ', full:'智力商数', color:'#4ecdc4', desc:'逻辑思维与学习能力' },
+  { id:'eq', name:'情商', en:'EQ', full:'情绪商数', color:'#45b7d1', desc:'情绪管理与人际沟通力' },
+  { id:'aq', name:'逆商', en:'AQ', full:'逆境商数', color:'#96ceb4', desc:'抗挫折与逆境反弹力' },
+  { id:'fq', name:'财商', en:'FQ', full:'财务商数', color:'#f9ca24', desc:'财务管理与投资判断力' },
+  { id:'sq', name:'灵商', en:'SQ', full:'灵性商数', color:'#dda0dd', desc:'人生意义与内在觉知力' },
+  { id:'hq', name:'健商', en:'HQ', full:'健康商数', color:'#98d8c8', desc:'健康管理与生活习惯' }
+];
+
+function getGrade(score){
+  // score is average of 2 questions (1-5 scale per question)
+  if(score>=4.0) return {grade:'A',label:'优秀',color:'#00b894'};
+  if(score>=3.0) return {grade:'B',label:'良好',color:'#00cec9'};
+  if(score>=2.0) return {grade:'C',label:'一般',color:'#fdcb6e'};
+  return {grade:'D',label:'待提升',color:'#ff7675'};
+}
+
+const QUESTIONS = [
+  // MQ - 德商
+  { q:'你在路上看到一位老人摔倒，你会怎么做？', qid:'mq', opts:[
+    '立即上前扶起并帮忙联系家人','先拍照留存证据再帮忙','犹豫后选择报警',
+    '看看周围有没有人去帮忙','当作没看见直接走开'
+  ]},
+  { q:'在工作中发现同事做了一个违背职业道德的决定，你会？', qid:'mq', opts:[
+    '立即劝阻并说明原因','向上级反映情况','私下提醒同事',
+    '装作不知道','觉得与自己无关'
+  ]},
+  // IQ - 智商
+  { q:'遇到一个复杂问题时，你通常会？', qid:'iq', opts:[
+    '快速分析并找到多种解决方案','花时间研究后能找到方法','需要别人帮助才能解决',
+    '会觉得非常困难无从下手','直接放弃'
+  ]},
+  { q:'学习新知识或新技能时，你感觉？', qid:'iq', opts:[
+    '非常轻松，很快就能掌握','比较顺利，稍加练习即可','需要一定时间和努力',
+    '比较吃力，需要反复学习','非常困难，很难学会'
+  ]},
+  // EQ - 情商
+  { q:'当朋友心情不好的时候，你通常会？', qid:'eq', opts:[
+    '敏锐察觉并给予恰当安慰','能察觉到并试着安慰','能注意到但不知道怎么做',
+    '需要对方说出来才知道','不太能察觉别人的情绪'
+  ]},
+  { q:'在团队中与他人意见不合时，你会？', qid:'eq', opts:[
+    '很好沟通并达成共识','表达观点并倾听对方','选择让步以避免冲突',
+    '坚持己见不妥协','生闷气或直接离开'
+  ]},
+  // AQ - 逆商
+  { q:'遇到重大挫败（如失业、落榜）时，你会？', qid:'aq', opts:[
+    '很快调整心态寻找新机会','难过一段时间后重新振作','需要很长时间才能走出来',
+    '变得非常消沉低落','很难接受现实一蹶不振'
+  ]},
+  { q:'面对一个非常困难的任务，你通常会？', qid:'aq', opts:[
+    '充满挑战欲，积极想办法','虽觉困难但会尽力而为','先试试看不行再放弃',
+    '感到焦虑和巨大压力','直接选择逃避'
+  ]},
+  // FQ - 财商
+  { q:'对于每个月的收入，你通常如何管理？', qid:'fq', opts:[
+    '有完善的理财规划和投资','有储蓄计划并严格执行','会存一部分钱但无明确规划',
+    '基本月光，有多少花多少','经常入不敷出'
+  ]},
+  { q:'对于投资理财（股票、基金等），你的态度是？', qid:'fq', opts:[
+    '很了解并有丰富的实践经验','有一定了解并愿意尝试','了解不多但有兴趣学习',
+    '觉得风险太大不敢尝试','完全不感兴趣'
+  ]},
+  // SQ - 灵商
+  { q:'你是否有明确的个人信念或人生目标？', qid:'sq', opts:[
+    '有非常清晰的人生目标与信念','有较为明确的方向','在探索中有些模糊想法',
+    '不太清楚自己想要什么','从未思考过这些问题'
+  ]},
+  { q:'当你独处时，你通常会？', qid:'sq', opts:[
+    '享受独处进行深度思考和反省','静下心来看书或冥想','做些轻松的事情放松',
+    '感到无聊和孤独','必须找人陪伴'
+  ]},
+  // HQ - 健商
+  { q:'你的生活习惯如何？', qid:'hq', opts:[
+    '作息规律，定期锻炼，饮食均衡','比较注意健康，偶尔锻炼','有时熬夜，饮食不太注意',
+    '经常熬夜，很少运动','生活完全没有规律'
+  ]},
+  { q:'关于健康知识，你觉得自己？', qid:'hq', opts:[
+    '非常了解并能科学管理健康','有基本的健康知识储备','有一定了解但不全面',
+    '了解很少','完全不关心'
+  ]}
+];
+
+// ====================== State ======================
+let state = {
+  screen:'welcome',
+  qIndex:0,
+  scores:{},
+  currentSelection:null
+};
+
+// ====================== Screen Switch ======================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  state.screen=id;
+}
+
+// ====================== Start ======================
+function startTest(){
+  state.qIndex=0;
+  state.scores={};
+  QUOTIENTS.forEach(q=>state.scores[q.id]=[]);
+  state.currentSelection=null;
+  showScreen('test');
+  renderQuestion();
+}
+
+// ====================== Render Question ======================
+function renderQuestion(){
+  const q=QUESTIONS[state.qIndex];
+  const qi=QUOTIENTS.find(x=>x.id===q.qid);
+  document.getElementById('qCounter').textContent=(state.qIndex+1)+' / 14';
+  document.getElementById('qCategory').textContent=qi.full;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('progressBar').style.width=((state.qIndex)/14*100)+'%';
+
+  const container=document.getElementById('qOptions');
+  container.innerHTML='';
+  state.currentSelection=null;
+  const keys=['A','B','C','D','E'];
+  q.opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.innerHTML='<span class="option-key">'+keys[i]+'</span><span class="option-text">'+opt+'</span>';
+    btn.dataset.index=i;
+    btn.onclick=()=>selectOption(i);
+    container.appendChild(btn);
+  });
+}
+
+function selectOption(index){
+  if(state.currentSelection===index) return;
+  state.currentSelection=index;
+  document.querySelectorAll('.option-btn').forEach((b,i)=>{
+    b.classList.toggle('selected',i===index);
+  });
+  setTimeout(()=>nextQuestion(index),280);
+}
+
+function nextQuestion(scoreIndex){
+  const q=QUESTIONS[state.qIndex];
+  const score=5-scoreIndex;
+  state.scores[q.qid].push(score);
+
+  if(state.qIndex<13){
+    state.qIndex++;
+    state.currentSelection=null;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+// ====================== Results ======================
+function showResults(){
+  showScreen('results');
+  const results={};
+  QUOTIENTS.forEach(qi=>{
+    const arr=state.scores[qi.id]||[];
+    const avg=arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;
+    results[qi.id]={score:Math.round(avg*10)/10, grade:getGrade(avg)};
+  });
+
+  const gradeCount={A:0,B:0,C:0,D:0};
+  Object.values(results).forEach(r=>gradeCount[r.grade.grade]++);
+  const gradeGrid=document.getElementById('gradeGrid');
+  gradeGrid.innerHTML='';
+  ['A','B','C','D'].forEach(g=>{
+    const d=document.createElement('div');d.className='g-item';
+    const labels={A:'优秀',B:'良好',C:'一般',D:'待提升'};
+    const colors={A:'#00b894',B:'#00cec9',C:'#fdcb6e',D:'#ff7675'};
+    d.innerHTML='<div class="g-grade" style="color:'+colors[g]+'">'+g+'</div><div class="g-label">'+labels[g]+' x'+gradeCount[g]+'</div>';
+    gradeGrid.appendChild(d);
+  });
+
+  const grid=document.getElementById('resultsGrid');
+  grid.innerHTML='';
+  QUOTIENTS.forEach(qi=>{
+    const r=results[qi.id];
+    const d=document.createElement('div');d.className='result-card';
+    d.innerHTML='<div class="rc-name" style="color:'+qi.color+'">'+qi.name+' '+qi.en+'</div>'+
+      '<div class="rc-value" style="color:'+qi.color+'">'+r.score.toFixed(1)+'</div>'+
+      '<div class="rc-grade" style="background:'+r.grade.color+'22;color:'+r.grade.color+'">'+r.grade.grade+' · '+r.grade.label+'</div>'+
+      '<div class="rc-score">'+qi.full+'</div>';
+    grid.appendChild(d);
+  });
+
+  setTimeout(()=>drawRadar(results),100);
+}
+
+// ====================== Radar Chart ======================
+function drawRadar(results){
+  const canvas=document.getElementById('radarCanvas');
+  const wrap=canvas.parentElement;
+  const size=Math.min(wrap.clientWidth,440);
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=size*dpr;
+  canvas.height=size*dpr;
+  canvas.style.width=size+'px';
+  canvas.style.height=size+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  const cx=size/2, cy=size/2;
+  const maxR=size/2-36;
+  const minScore=1, maxScore=5;
+
+  const n=7;
+  const angles=[];
+  for(let i=0;i<n;i++){
+    angles.push((i*2*Math.PI/n)-Math.PI/2);
+  }
+
+  function scoreToR(s){
+    const t=(s-minScore)/(maxScore-minScore);
+    return 10+t*(maxR-10);
+  }
+
+  function drawHeptagon(r,strokeStyle,lineWidth){
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const x=cx+r*Math.cos(angles[i]);
+      const y=cy+r*Math.sin(angles[i]);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    if(strokeStyle){ctx.strokeStyle=strokeStyle;ctx.lineWidth=lineWidth||1;ctx.stroke()}
+  }
+
+ // Fill grade zones from outer to inner
+  const gradeR=[4.0,3.0,2.0,1.0].map(s=>scoreToR(s));
+  const zoneColors=['rgba(0,184,148,0.06)','rgba(0,206,201,0.04)','rgba(253,203,110,0.04)','rgba(255,118,117,0.04)'];
+  for(let z=0;z<4;z++){
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const x=cx+gradeR[z]*Math.cos(angles[i]);
+      const y=cy+gradeR[z]*Math.sin(angles[i]);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.fillStyle=zoneColors[z];
+    ctx.fill();
+  }
+
+  // Grade boundary rings
+  ctx.setLineDash([5,5]);
+  drawHeptagon(scoreToR(4.0),'rgba(0,184,148,0.3)',1.5);
+  drawHeptagon(scoreToR(3.0),'rgba(0,206,201,0.3)',1.5);
+  drawHeptagon(scoreToR(2.0),'rgba(253,203,110,0.3)',1.5);
+  drawHeptagon(scoreToR(1.0),'rgba(255,118,117,0.3)',1.5);
+  ctx.setLineDash([]);
+
+  drawHeptagon(maxR,'rgba(255,255,255,0.15)',1);
+
+  // Grade labels on right side
+  const labelX=cx+maxR+8;
+  const labelR=[4.0,3.0,2.0,1.0].map(s=>scoreToR(s));
+  const gradeColors={A:'#00b894',B:'#00cec9',C:'#fdcb6e',D:'#ff7675'};
+  ctx.font='12px -apple-system, sans-serif';
+  ctx.textAlign='left';
+  ctx.textBaseline='middle';
+  ['A','B','C','D'].forEach((g,i)=>{
+    ctx.fillStyle=gradeColors[g];
+    ctx.fillText(g,labelX,cy-labelR[i]);
+  });
+
+  // Axes
+  QUOTIENTS.forEach((qi,i)=>{
+    const angle=angles[i];
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+maxR*Math.cos(angle),cy+maxR*Math.sin(angle));
+    ctx.strokeStyle='rgba(255,255,255,0.12)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    const lx=cx+(maxR+18)*Math.cos(angle);
+    const ly=cy+(maxR+18)*Math.sin(angle);
+    ctx.fillStyle=qi.color;
+    ctx.font='bold 13px -apple-system, sans-serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(qi.name,lx,ly);
+    ctx.font='10px -apple-system, sans-serif';
+    ctx.fillStyle='rgba(255,255,255,0.4)';
+    ctx.fillText(qi.en,lx,ly+15);
+  });
+
+  // Data polygon
+  const dataPoints=QUOTIENTS.map((qi,i)=>{
+    const r=results[qi.id];
+    const scoreVal=r?r.score:1;
+    const rad=scoreToR(Math.min(Math.max(scoreVal,1),5));
+    return {x:cx+rad*Math.cos(angles[i]),y:cy+rad*Math.sin(angles[i]),score:scoreVal,grade:r?r.grade:getGrade(1)};
+  });
+
+  ctx.beginPath();
+  dataPoints.forEach((p,i)=>{
+    i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);
+  });
+  ctx.closePath();
+  const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,maxR);
+  grad.addColorStop(0,'rgba(108,92,231,0.25)');
+  grad.addColorStop(1,'rgba(162,155,254,0.15)');
+  ctx.fillStyle=grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  dataPoints.forEach((p,i)=>{
+    i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);
+  });
+  ctx.closePath();
+  ctx.strokeStyle='#a29bfe';
+  ctx.lineWidth=2.5;
+  ctx.stroke();
+
+  dataPoints.forEach((p,i)=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,5,0,2*Math.PI);
+    ctx.fillStyle=QUOTIENTS[i].color;
+    ctx.fill();
+    ctx.strokeStyle='#fff';
+    ctx.lineWidth=2;
+    ctx.stroke();
+  });
+}
+
+// ====================== Reset ======================
+function resetTest(){
+  state.qIndex=0;
+  state.scores={};
+  QUOTIENTS.forEach(q=>state.scores[q.id]=[]);
+  state.currentSelection=null;
+  showScreen('welcome');
+}
+
+// ====================== Init ======================
+QUOTIENTS.forEach(q=>state.scores[q.id]=[]);
+</script>
+</body>
+</html>
